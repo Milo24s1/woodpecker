@@ -1,0 +1,21 @@
+{
+  "name": "woodpecker-search",
+  "version": "1.0.0",
+  "description": "this is a simple application to search woodpacker campa",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "insta"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "woodpecker-api": "1.1.0",
+    "body-parser": "^1.18.2",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  }
+}
