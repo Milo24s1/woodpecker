@@ -18,23 +18,28 @@
 </head>
 <body>
 <nav class="navbar navbar-dark primary-color">
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="/">
         <!--<img src="https://mdbootstrap.com/img/logo/mdb-transparent.png" height="30" class="d-inline-block align-top" alt="">-->
         <img src="https://d33v4339jhl8k0.cloudfront.net/docs/assets/55e71aa290336027d7707900/images/5b3e0e1e2c7d3a099f2e3433/logo_woodpecker2.png" height="30" class="d-inline-block align-top" alt="">
         Woodpecker
     </a>
+    <a href="/" class="white-text">Home</a>
 </nav>
-<div style="height: 100vh">
-    <div class="flex-center flex-column">
-        <h1 class="animated fadeIn mb-4">Woodpeacker Data Report</h1>
+<div class="flex-center flex-column">
 
-        <h5 class="animated fadeIn mb-3">Thank you for using our product. We're glad you're with us.</h5>
+    <div id="loader" class="loader invisible center-block"></div>
+    <form id="tokenForm" method="post">
+        <div class="md-form mt-3">
+            <label class="active" for="companyName">Company</label>
+            <input type="text" id="companyName" className="form-control">
 
-        <p class="animated fadeIn text-muted">Woodpeacker Team</p>
-
-        <a href="#tableDiv"><button type="button" class="btn btn-success btn-lg">Show</button></a>
-        <a href="add"><button type="button" class="btn purple btn-lg">Add Token</button></a>
-    </div>
+        </div>
+        <div class="md-form mt-3">
+            <label class="active" for="token">Token</label>
+            <input type="text" id="token" className="form-control">
+        </div>
+        <button id="addToken" class="btn btn-success">Add Token</button>
+    </form>
 </div>
 <div id="tableDiv" class="row">
     <div class="col-2"></div>
@@ -43,33 +48,24 @@
             <thead class="orange white-text">
             <tr>
                 <th scope="col">Company</th>
-                <th scope="col">Campaign</th>
-                <th scope="col">Email Deliverd</th>
-                <th scope="col">Opened</th>
-                <th scope="col">Responses</th>
+                <th scope="col">Token</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <th scope="row">Facebook</th>
-                <td>Newsfeed</td>
-                <td>123333</td>
-                <td>10034</td>
-                <td>923</td>
+                <td>adsfsfr5t56hfhghgh</td>
             </tr>
             <tr>
                 <th scope="row">Twitter</th>
-                <td>Retweets</td>
-                <td>193333</td>
-                <td>6789</td>
-                <td>788</td>
+                <td>t56hfhghghadsfsfr</td>
             </tr>
             </tbody>
         </table>
     </div>
     <div class="col-2"></div>
 </div>
-<div style="height: 10vh">
+<div style="height: 30vh">
 </div>
 
 <!-- Footer -->
@@ -98,25 +94,22 @@
 <script>
     $(document).ready(function () {
 
-        $("#searchButton").click(function (e) {
-            $("#loader").removeClass('hide');
+        $("#addToken").click(function (e) {
+
+            $('table > tbody').append('<tr><th scope="row">'+$('#companyName').val()+'</th><td>'+$('#token').val()+'</td></tr>');
+            $("#loader").removeClass('invisible');
             e.preventDefault();
 
             $.ajax({
-                url : '/search',
+                url : '/addToken',
                 data: {
-                    username : $('#username').val()
+                    company : $('#companyName').val(),
+                    token : $('#token').val()
                 },
                 method: 'post',
                 datatype: 'json',
                 success: function (data) {
-
-                    $("#profile_image img").attr('src',data.imageUrl);
-                    $("#followers_count h2").text(data.followers);
-                    $("#following_count h2").text(data.following);
-                    $("#posts_count h2").text(data.post);
-                    $("#loader").addClass('hide');
-                    $("#stats").removeClass('hide');
+                    $("#loader").addClass('invisible');
 
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
@@ -124,7 +117,7 @@
                     if(xhr.status!=200) {
                         alert('No Result Found');
                     }
-                    $("#loader").addClass('hide');
+                    $("#loader").addClass('invisible');
                 }
             });
         });
@@ -143,6 +136,10 @@
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+
+    #tableDiv{
+        margin-top: 40px;
     }
 </style>
 </body>
