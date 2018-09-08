@@ -31,12 +31,12 @@
     <form id="tokenForm" method="post">
         <div class="md-form mt-3">
             <label class="active" for="companyName">Company</label>
-            <input type="text" id="companyName" className="form-control">
+            <input type="text" id="companyName" className="form-control" required>
 
         </div>
         <div class="md-form mt-3">
             <label class="active" for="token">Token</label>
-            <input type="text" id="token" className="form-control">
+            <input type="text" id="token" className="form-control" required>
         </div>
         <button id="addToken" class="btn btn-success">Add Token</button>
     </form>
@@ -49,17 +49,17 @@
             <tr>
                 <th scope="col">Company</th>
                 <th scope="col">Token</th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
+            <% for(var i=0; i < itms.length; i++) { %>
             <tr>
-                <th scope="row">Facebook</th>
-                <td>adsfsfr5t56hfhghgh</td>
+                <th scope="row"><%= itms[i].company %></th>
+                <td><%= itms[i].token %></td>
+                <td><a data-tid="<%= i %>" href="/deleteToken/<%= i %>" class="btn btn-sm btn-danger">Delete</a></td>
             </tr>
-            <tr>
-                <th scope="row">Twitter</th>
-                <td>t56hfhghghadsfsfr</td>
-            </tr>
+            <% } %>
             </tbody>
         </table>
     </div>

@@ -17,13 +17,14 @@ app.get('/', function(req, res){
 });
 app.get('/add', function(req, res){
     console.log('get req came');
-    res.render('add');
+    res.render('add',{itms: token.readToken()});
 });
 
 app.post('/addToken',function (req,res) {
-    res.status(200).send();
-    return;
     token.addToken(req,res);
+});
+app.get('/deleteToken/:id',function (req,res) {
+    token.deleteToken(req,res);
 });
 
 
