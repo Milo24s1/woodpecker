@@ -1,7 +1,6 @@
 const Woodpecker = require('woodpecker-api');
 const fs = require('fs');
 
-const companyToken = '32755.a724decf926ed2aeaf513b08e38fec37e415a6dd07e32869a3d71a4906f70e27';
 
 function searchCompanyCampaigns(companyToken,company) {
 
@@ -27,8 +26,11 @@ function searchCompanyCampaigns(companyToken,company) {
                         'company':company,
                         'campaign':item.name,
                         'delivered': item.stats.delivery,
+                        'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.sent),
                         'opened':item.stats.opened,
+                        'openedPrecentage':Math.floor(100*item.stats.opened/item.stats.delivery),
                         'responses':item.stats.replied,
+                        'responsesPrecentage':Math.floor(100*item.stats.replied/item.stats.delivery),
                         'prospects':item.stats.prospects
 
                     };
@@ -94,7 +96,6 @@ function getTokenCompanyMap() {
     return {'hashArray':hashArray,'tokenArray':tokenArray};
 }
 
-//searchCompanyCampaigns(companyToken);
 
 var woodpeker = {};
 woodpeker.search = function(req,res){

@@ -104,9 +104,9 @@
                                         <th scope="row">${data.rowData[i].company}</th>
                                         <td>${data.rowData[i].campaign}</td>
                                         <td>${data.rowData[i].prospects}</td>
-                                        <td>${data.rowData[i].delivered}</td>
-                                        <td>${data.rowData[i].opened}</td>
-                                        <td>${data.rowData[i].responses}</td>
+                                        <td>${data.rowData[i].delivered} (${data.rowData[i].deliveredPrecentage}%)</td>
+                                        <td>${data.rowData[i].opened} (${data.rowData[i].openedPrecentage}%)</td>
+                                        <td>${data.rowData[i].responses} (${data.rowData[i].responsesPrecentage}%)</td>
                                         </tr>`
                         }
                         $("table").append(tableDom)
