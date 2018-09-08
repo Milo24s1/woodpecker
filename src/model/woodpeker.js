@@ -28,7 +28,9 @@ function searchCompanyCampaigns(companyToken,company) {
                         'campaign':item.name,
                         'delivered': item.stats.delivery,
                         'opened':item.stats.opened,
-                        'responses':item.stats.replied
+                        'responses':item.stats.replied,
+                        'prospects':item.stats.prospects
+
                     };
                     rowData.push(row);
                 }
