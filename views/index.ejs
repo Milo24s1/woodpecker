@@ -56,6 +56,10 @@
     </div>
     <div class="col-2"></div>
 </div>
+<div class="flex-center flex-column">
+    <div id="loader" class="loader invisible center-block"></div>
+</div>
+
 <div style="height: 10vh">
 </div>
 
@@ -88,6 +92,7 @@
 
         lazyLoad();
         function lazyLoad(next) {
+            $("#loader").removeClass('invisible');
             $.ajax({
                 url : '/search',
                 data: {
@@ -111,7 +116,7 @@
                         }
                         $("table").append(tableDom)
                     }
-
+                    $("#loader").addClass('invisible');
                     if(data.next != undefined){
                         lazyLoad(data.next);
                     }
@@ -122,6 +127,7 @@
 
                     if(xhr.status!=200) {
                         alert('Something went wrong');
+                        $("#loader").addClass('invisible');
                     }
                 }
             });
