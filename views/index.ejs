@@ -50,20 +50,6 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">Facebook</th>
-                <td>Newsfeed</td>
-                <td>123333</td>
-                <td>10034</td>
-                <td>923</td>
-            </tr>
-            <tr>
-                <th scope="row">Twitter</th>
-                <td>Retweets</td>
-                <td>193333</td>
-                <td>6789</td>
-                <td>788</td>
-            </tr>
             </tbody>
         </table>
     </div>
@@ -98,37 +84,49 @@
 <script>
     $(document).ready(function () {
 
-        $("#searchButton").click(function (e) {
-            $("#loader").removeClass('hide');
-            e.preventDefault();
 
+        lazyLoad();
+        function lazyLoad(next) {
             $.ajax({
                 url : '/search',
                 data: {
-                    username : $('#username').val()
+                    next : next
                 },
                 method: 'post',
                 datatype: 'json',
                 success: function (data) {
+                    let tableDom = '';
+                    console.log(data.rowData.length > 0);
+                    if(true){
+                        for(i=0;i<data.rowData.length;i++){
+                            tableDom += `<tr>
+                                        <th scope="row">${data.rowData[i].company}</th>
+                                        <td>${data.rowData[i].campaign}</td>
+                                        <td>${data.rowData[i].delivered}</td>
+                                        <td>${data.rowData[i].opened}</td>
+                                        <td>${data.rowData[i].responses}</td>
+                                        </tr>`
+                        }
+                        $("table").append(tableDom)
+                    }
 
-                    $("#profile_image img").attr('src',data.imageUrl);
-                    $("#followers_count h2").text(data.followers);
-                    $("#following_count h2").text(data.following);
-                    $("#posts_count h2").text(data.post);
-                    $("#loader").addClass('hide');
-                    $("#stats").removeClass('hide');
+                    if(data.next != undefined){
+                        lazyLoad(data.next);
+                    }
+
 
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
 
                     if(xhr.status!=200) {
-                        alert('No Result Found');
+                        alert('Something went wrong');
                     }
-                    $("#loader").addClass('hide');
                 }
             });
-        });
+        }
     });
+
+
 </script>
 <style>
     .loader {

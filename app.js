@@ -1,6 +1,7 @@
 const express =  require('express');
 var bodyParser = require('body-parser');
 var token = require('./src/model/token');
+var woodpeker = require('./src/model/woodpeker');
 
 const app = express();
 const port = process.env.PORT || 9999;
@@ -25,6 +26,10 @@ app.post('/addToken',function (req,res) {
 });
 app.get('/deleteToken/:id',function (req,res) {
     token.deleteToken(req,res);
+});
+
+app.post('/search',function (req,res) {
+    woodpeker.search(req,res);
 });
 
 
