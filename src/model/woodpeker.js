@@ -21,19 +21,23 @@ function searchCompanyCampaigns(companyToken,company) {
 
                 for (let item of values){
                     item =item[0];
-                    const row = {
-                        'company':company,
-                        'campaign':item.name,
-                        'delivered': item.stats.delivery,
-                        'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.prospects),
-                        'opened':item.stats.opened,
-                        'openedPrecentage':Math.floor(100*item.stats.opened/item.stats.delivery),
-                        'responses':item.stats.replied,
-                        'responsesPrecentage':Math.floor(100*item.stats.replied/item.stats.delivery),
-                        'prospects':item.stats.prospects
+                    if(item.status != 'DELETED'){
+                        const row = {
+                            'company':company,
+                            'campaign':item.name,
+                            'delivered': item.stats.delivery,
+                            'status': item.status,
+                            'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.prospects),
+                            'opened':item.stats.opened,
+                            'openedPrecentage':Math.floor(100*item.stats.opened/item.stats.delivery),
+                            'responses':item.stats.replied,
+                            'responsesPrecentage':Math.floor(100*item.stats.replied/item.stats.delivery),
+                            'prospects':item.stats.prospects
 
-                    };
-                    rowData.push(row);
+                        };
+                        rowData.push(row);
+                    }
+
                 }
 
                 resolve(rowData) ;

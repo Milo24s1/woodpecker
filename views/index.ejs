@@ -35,6 +35,7 @@
             <tr>
                 <th scope="col">Company</th>
                 <th scope="col">Campaign</th>
+                <th scope="col">Status</th>
                 <th scope="col">Prospects</th>
                 <th scope="col">Email Delivered</th>
                 <th scope="col">Opened</th>
@@ -99,6 +100,7 @@
                             tableDom += `<tr>
                                         <th scope="row">${data.rowData[i].company}</th>
                                         <td>${data.rowData[i].campaign}</td>
+                                        <td>${data.rowData[i].status}</td>
                                         <td>${data.rowData[i].prospects}</td>
                                         <td>${data.rowData[i].delivered} (${data.rowData[i].deliveredPrecentage}%)</td>
                                         <td>${data.rowData[i].opened} (${data.rowData[i].openedPrecentage}%)</td>
