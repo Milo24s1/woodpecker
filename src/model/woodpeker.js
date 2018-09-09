@@ -21,12 +21,11 @@ function searchCompanyCampaigns(companyToken,company) {
 
                 for (let item of values){
                     item =item[0];
-                    console.log(item.name);
                     const row = {
                         'company':company,
                         'campaign':item.name,
                         'delivered': item.stats.delivery,
-                        'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.sent),
+                        'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.prospects),
                         'opened':item.stats.opened,
                         'openedPrecentage':Math.floor(100*item.stats.opened/item.stats.delivery),
                         'responses':item.stats.replied,
@@ -37,7 +36,6 @@ function searchCompanyCampaigns(companyToken,company) {
                     rowData.push(row);
                 }
 
-                console.log(rowData);
                 resolve(rowData) ;
 
             })
