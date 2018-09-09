@@ -20,8 +20,11 @@ token.readToken = function(){
 };
 
 token.deleteToken = function(req,res){
+    console.log(req.params.id);
     const data =JSON.parse(fs.readFileSync('config.txt','utf8')).data;
-    data.splice(req.body.id,1);
+    const removed =data.splice(req.params.id,1);
+    console.log(removed);
+    console.log(data);
     fs.writeFileSync('config.txt',JSON.stringify({"data":data}),'utf8');
     res.redirect('/add');
 

@@ -109,6 +109,7 @@
                 success: function (data) {
                     $("#loader").addClass('invisible');
                     document.querySelector('form').reset();
+                    window.location = '/add';
 
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
