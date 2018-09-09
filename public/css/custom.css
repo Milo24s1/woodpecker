@@ -1,11 +1,13 @@
 a {
-    color: #020843 !important;
+    color: #fff !important;
 }
-#addButton {
-    background-color: #020843 !important;
-}
+
 body{
     font-family: 'Poppins', sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+footer ,thead, nav{
+    background-color: #020843 !important;
 }
