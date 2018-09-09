@@ -108,13 +108,15 @@
                 datatype: 'json',
                 success: function (data) {
                     $("#loader").addClass('invisible');
+                    document.querySelector('form').reset();
 
                 },
                 error : function (xhr, ajaxOptions, thrownError) {
 
                     if(xhr.status!=200) {
-                        alert('No Result Found');
+                        alert('Something went wrong with adding token, pleas refresh the page and try again');
                     }
+                    document.querySelector('form').reset();
                     $("#loader").addClass('invisible');
                 }
             });
