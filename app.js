@@ -1,7 +1,9 @@
 const express =  require('express');
 var bodyParser = require('body-parser');
+var fs = require('fs');
 var token = require('./src/model/token');
 var woodpeker = require('./src/model/woodpeker');
+const auth = require('basic-auth');
 
 const app = express();
 const port = process.env.PORT || 9999;
@@ -11,6 +13,26 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 
+app.use('/add',(req,res,next)=>{
+    var user = auth(req);
+
+    if(user==undefined){
+        res.set({
+            'WWW-Authenticate': 'Basic realm="simple-admin"'
+        }).sendStatus(401);
+    }
+
+    const savedUser = JSON.parse(fs.readFileSync('user.txt'));
+    if (user.pass == savedUser.password && user.name ==savedUser.username){
+        next();
+    }
+    else{
+        res.set({
+            'WWW-Authenticate': 'Basic realm="simple-admin"'
+        }).sendStatus(401);
+    }
+
+});
 
 app.get('/', function(req, res){
     console.log('get req came');
