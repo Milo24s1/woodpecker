@@ -48,6 +48,7 @@
                 <th scope="col">Company</th>
                 <th scope="col">Token</th>
                 <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
@@ -56,6 +57,7 @@
                 <th scope="row"><%= itms[i].company %></th>
                 <td><%= itms[i].token %></td>
                 <td><a data-tid="<%= i %>" href="/deleteToken/<%= i %>" class="btn btn-sm btn-danger">Delete</a></td>
+                <td><a data-toggle="modal" data-target="#emailConfig"><i class="fa fa-bell fa-2x cyan-text pr-3" aria-hidden="true"></i></a></td>
             </tr>
             <% } %>
             </tbody>
@@ -64,6 +66,69 @@
     <div class="col-2"></div>
 </div>
 <div style="height: 30vh">
+</div>
+
+<div class="modal fade" id="emailConfig" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog  modal-notify modal-success "  role="document" >
+    <!--Content-->
+    <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header">
+            <p class="heading lead font-weight-bold">Email Configuration</p>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="white-text">×</span>
+            </button>
+        </div>
+
+        <!--Body-->
+        <div class="modal-body">
+            <div class="text-center">
+                <i class="fa fa-check fa-4x mb-3 animated rotateIn"></i>
+            </div>
+
+            <form class="needs-validation" novalidate>
+            <div class="md-form">
+                <i class="fa fa-envelope prefix"></i>
+                <input type="text" id="inputIconEx1" class="form-control" value="matt@prospectgenai.com" required>
+                <label for="inputIconEx1">E-mail address</label>
+            </div>
+            </form>
+            <p class="font-weight-bold" id="addEmail"><i class="fa fa-envelope-o cyan-text" aria-hidden="true"></i>&nbsp;Add Another Email </p>
+        </div>
+
+        <!--Footer-->
+        <div class="modal-footer">
+            <a type="button" id="sendEmail" class="btn btn-success waves-effect waves-light">Send now
+                <i class="fa fa-diamond ml-1"></i>
+            </a>
+            <a type="button" class="btn btn-outline-success waves-effect" data-dismiss="modal">Cancel</a>
+        </div>
+    </div>
+    <!--/.Content-->
+    </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-success" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <i class="fa fa-check fa-4x mb-3 animated rotateIn"></i>
+                    <h2>Successfully Sent</h2>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Footer -->
@@ -91,7 +156,8 @@
 
 <script>
     $(document).ready(function () {
-
+        var inputCount = 1;
+        var currentToken = null;
         $("#addToken").click(function (e) {
 
             $('table > tbody').append('<tr><th scope="row">'+$('#companyName').val()+'</th><td>'+$('#token').val()+'</td></tr>');
@@ -122,22 +188,83 @@
                 }
             });
         });
+
+        $(".fa-bell").click(function (e) {
+            console.log('this is fired too');
+            currentToken = $(".fa-bell").closest('tr').find('td')[0].innerHTML;
+        });
+
+        $("#addEmail").click(function (e) {
+            inputCount++;
+            console.log('fired');
+            var newInputFieldHtml = `<div class="md-form additionalEmails">
+                <i class="fa fa-envelope prefix"></i>
+                <input type="text"  id="inputIconEx`+inputCount+`" class="form-control" required>
+                <label for="inputIconEx`+inputCount+`">E-mail address</label>
+            </div>`;
+            $(".needs-validation").append(newInputFieldHtml);
+        });
+
+        $("#sendEmail").click(function (e) {
+
+            var doValidation = true;
+
+
+            if(doValidation){
+
+                var emailAddressList = [];
+                var nodes= document.querySelectorAll(".form-control");
+                for(i=0;i<nodes.length;i++){
+                    emailAddressList.push(nodes[i].value)
+                }
+                console.log(emailAddressList);
+                $(".additionalEmails").remove();
+                document.querySelector('[data-dismiss="modal"]').click();
+                $("#loader").removeClass('invisible');
+
+                $.ajax({
+                    url: '/sendEmail',
+                    method: 'post',
+                    dataType: 'json',
+                    data: {
+                        emailAddressList : emailAddressList,
+                        token: currentToken
+                    },
+                    success: function (data) {
+                        $("#loader").addClass('invisible');
+                        $('#successModal').modal('show');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        if(xhr.status!=200) {
+                            $("#loader").addClass('invisible');
+                            alert('Something went wrong with Sending Email, pleas refresh the page and try again');
+                        }
+                    }
+                });
+
+
+                currentToken = null;
+
+
+            }
+
+        });
     });
 </script>
 <style>
-    .loader {
-        border: 16px solid #f3f3f3; /* Light grey */
-        border-top: 16px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 120px;
-        height: 120px;
-        animation: spin 2s linear infinite;
-    }
+    /*.loader {*/
+        /*border: 16px solid #f3f3f3; !* Light grey *!*/
+        /*border-top: 16px solid #3498db; !* Blue *!*/
+        /*border-radius: 50%;*/
+        /*width: 120px;*/
+        /*height: 120px;*/
+        /*animation: spin 2s linear infinite;*/
+    /*}*/
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+    /*@keyframes spin {*/
+        /*0% { transform: rotate(0deg); }*/
+        /*100% { transform: rotate(360deg); }*/
+    /*}*/
 
     #tableDiv{
         margin-top: 40px;
