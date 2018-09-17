@@ -3,10 +3,11 @@ var bodyParser = require('body-parser');
 var fs = require('fs');
 var token = require('./src/model/token');
 var woodpeker = require('./src/model/woodpeker');
+var woodpeckMailer = require('./src/model/woodpeckMailer');
 const auth = require('basic-auth');
 
 const app = express();
-const port = process.env.PORT || 9999;
+const port = process.env.PORT || 49152;
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -52,6 +53,10 @@ app.get('/deleteToken/:id',function (req,res) {
 
 app.post('/search',function (req,res) {
     woodpeker.search(req,res);
+});
+
+app.post('/sendEmail',function (req,res) {
+    woodpeckMailer.sendMail(req,res);
 });
 
 
