@@ -94,8 +94,7 @@
                 datatype: 'json',
                 success: function (data) {
                     let tableDom = '';
-                    console.log(data.rowData.length > 0);
-                    if(true){
+                    if(data.rowData.length > 0){
                         for(i=0;i<data.rowData.length;i++){
                             tableDom += `<tr>
                                         <th scope="row">${data.rowData[i].company}</th>

@@ -45,11 +45,14 @@ function searchCompanyCampaigns(companyToken,company) {
             })
                 .catch(e=>{
                     console.log(e);
+                    resolve([]);
             });
 
 
-        }).catch(e=>{
-
+        }).
+        catch(e=>{
+            console.log(e);
+            resolve([]);
         });
     });
 
@@ -62,6 +65,7 @@ async function getNextResultSet(token,res) {
     if(token==undefined){
         token = tokenArray[0];
     }
+    console.log(token,hashArray[token]);
     const rowData = await searchCompanyCampaigns(token,hashArray[token]);
     console.log('this is called after');
     const nextToken = tokenArray[tokenArray.indexOf(token)+1];
