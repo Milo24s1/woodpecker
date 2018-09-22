@@ -52,6 +52,7 @@ app.get('/deleteToken/:id',function (req,res) {
 });
 
 app.post('/search',function (req,res) {
+    console.log('called search');
     woodpeker.search(req,res);
 });
 
