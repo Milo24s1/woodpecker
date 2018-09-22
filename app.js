@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 
-app.use('/add',(req,res,next)=>{
+app.use('/',(req,res,next)=>{
     var user = auth(req);
 
     if(user==undefined){
@@ -36,11 +36,9 @@ app.use('/add',(req,res,next)=>{
 });
 
 app.get('/', function(req, res){
-    console.log('get req came');
     res.render('index');
 });
 app.get('/add', function(req, res){
-    console.log('get req came');
     res.render('add',{itms: token.readToken()});
 });
 

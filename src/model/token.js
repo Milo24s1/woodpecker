@@ -16,19 +16,25 @@ token.addToken = function (req,res) {
 };
 
 token.readToken = function(){
-    return JSON.parse(fs.readFileSync('config.txt','utf8')).data;
+    return JSON.parse(fs.readFileSync('config.txt','utf8')).data.sort(function(a, b) {
+        return compareStrings(a.company, b.company);
+    });
 };
 
 token.deleteToken = function(req,res){
     console.log(req.params.id);
     const data =JSON.parse(fs.readFileSync('config.txt','utf8')).data;
     const removed =data.splice(req.params.id,1);
-    console.log(removed);
-    console.log(data);
     fs.writeFileSync('config.txt',JSON.stringify({"data":data}),'utf8');
     res.redirect('/add');
 
 };
+function compareStrings(a, b) {
+    // Assuming you want case-insensitive comparison
+    a = a.toLowerCase();
+    b = b.toLowerCase();
 
+    return (a < b) ? -1 : (a > b) ? 1 : 0;
+}
 
 module.exports = token;

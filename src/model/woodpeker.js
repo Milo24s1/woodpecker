@@ -95,11 +95,22 @@ function searchAllCampaigns() {
 function getTokenCompanyMap() {
     let hashArray = [];
     let tokenArray = [];
-    JSON.parse(fs.readFileSync('config.txt'),'utf8').data.map(o=> {
+    JSON.parse(fs.readFileSync('config.txt'),'utf8').data.sort(function(a, b) {
+        return compareStrings(a.company, b.company);
+    }).map(o=> {
         hashArray[o.token]=o.company;
         tokenArray.push(o.token);
     });
     return {'hashArray':hashArray,'tokenArray':tokenArray};
+}
+
+
+function compareStrings(a, b) {
+    // Assuming you want case-insensitive comparison
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+
+    return (a < b) ? -1 : (a > b) ? 1 : 0;
 }
 
 
