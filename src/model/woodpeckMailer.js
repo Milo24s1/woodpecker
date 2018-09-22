@@ -52,7 +52,7 @@ woodpeckMailer.sendMail = async function(req,res){
 function getTokenCompanyMap() {
     let hashArray = [];
     let tokenArray = [];
-    JSON.parse(fs.readFileSync('/home/sanjaya/Downloads/Hack/woodpeker/config.txt'),'utf8').data.map(o=> {
+    JSON.parse(fs.readFileSync('config.txt'),'utf8').data.map(o=> {
         hashArray[o.token]=o.company;
         tokenArray.push(o.token);
     });
