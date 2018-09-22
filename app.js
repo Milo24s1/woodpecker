@@ -4,6 +4,7 @@ var fs = require('fs');
 var token = require('./src/model/token');
 var woodpeker = require('./src/model/woodpeker');
 var woodpeckMailer = require('./src/model/woodpeckMailer');
+const config = require('./config/credintials');
 const auth = require('basic-auth');
 
 const app = express();
@@ -23,8 +24,7 @@ app.use('/add',(req,res,next)=>{
         }).sendStatus(401);
     }
 
-    const savedUser = JSON.parse(fs.readFileSync('user.txt'));
-    if (user.pass == savedUser.password && user.name ==savedUser.username){
+    if (user.pass == config.systemPassword && user.name ==config.systemUserName){
         next();
     }
     else{
