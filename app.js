@@ -1,5 +1,6 @@
 const express =  require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 var fs = require('fs');
 var token = require('./src/model/token');
 var woodpeker = require('./src/model/woodpeker');
@@ -35,18 +36,31 @@ app.use('/',(req,res,next)=>{
 
 });
 
+mongoose.connect(config.database);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useNewUrlParser', true);
+mongoose.connection.on('connected',()=>{
+    console.log('connected to '+config.database);
+});
+mongoose.connection.on('error',(error)=>{
+    console.log('Database error '+error);
+});
+
+
 app.get('/', function(req, res){
     res.render('index');
 });
 app.get('/add', function(req, res){
-    res.render('add',{itms: token.readToken()});
+    token.readTokenFromDatabase(req, res);
+
+    //res.render('add',{itms: token.readToken()});
 });
 
 app.post('/addToken',function (req,res) {
-    token.addToken(req,res);
+    token.addTokenToDatabase(req,res);
 });
 app.get('/deleteToken/:id',function (req,res) {
-    token.deleteToken(req,res);
+    token.deleteTokenFromDatabase(req,res);
 });
 
 app.post('/search',function (req,res) {

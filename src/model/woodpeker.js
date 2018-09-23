@@ -1,5 +1,6 @@
 const Woodpecker = require('woodpecker-api');
 const fs = require('fs');
+const Company = require('../../model/company');
 
 
 function searchCompanyCampaigns(companyToken,company) {
@@ -61,13 +62,11 @@ function searchCompanyCampaigns(companyToken,company) {
 }
 
 async function getNextResultSet(token,res) {
-    let {hashArray, tokenArray}= getTokenCompanyMap();
+    let {hashArray, tokenArray}= await getTokenCompanyMapFromDatabase();
     if(token==undefined){
         token = tokenArray[0];
     }
-    console.log(token,hashArray[token]);
     const rowData = await searchCompanyCampaigns(token,hashArray[token]);
-    console.log('this is called after');
     const nextToken = tokenArray[tokenArray.indexOf(token)+1];
 
     res.send({'next':nextToken,'rowData':rowData});
@@ -75,22 +74,6 @@ async function getNextResultSet(token,res) {
 
 }
 
-function searchAllCampaigns() {
-    const  data = [];
-    let promiseArray = [];
-    let tokenList = getTokenCompanyMap();
-    for (let token in tokenList){
-        promiseArray.push(searchCompanyCampaigns(token));
-        console.log('should first');
-    }
-
-
-    // return Promise.all(promiseArray).then(campaigns=>{
-    //     campaigns.forEach(campaign=>{
-    //         console.log(campaign);
-    //     });
-    // })
-}
 
 function getTokenCompanyMap() {
     let hashArray = [];
@@ -102,6 +85,31 @@ function getTokenCompanyMap() {
         tokenArray.push(o.token);
     });
     return {'hashArray':hashArray,'tokenArray':tokenArray};
+}
+
+function getTokenCompanyMapFromDatabase() {
+    let hashArray = [];
+    let tokenArray = [];
+
+    return new Promise(function (resolve,reject) {
+        Company.getCompanyList(function (err,data) {
+            console.log(data[0]);
+            if(err){
+                console.log(err);
+            }
+            else{
+                data.map(o=> {
+                    console.log(o);
+                    hashArray[o.token]=o.companyName;
+                    tokenArray.push(o.token);
+                });
+            }
+            resolve({'hashArray':hashArray,'tokenArray':tokenArray});
+        })
+
+    });
+
+
 }
 
 
