@@ -92,7 +92,6 @@ function getTokenCompanyMapFromDatabase() {
 
     return new Promise(function (resolve,reject) {
         Company.getCompanyList(function (err,data) {
-            console.log(data[0]);
             if(err){
                 console.log(err);
             }
