@@ -17,7 +17,6 @@ function searchCompanyCampaigns(companyToken,company) {
             Promise.all(companyPromiseArray)
                 .then(values=>{
 
-                console.log('Im going print this after all data loaded');
                 const rowData = [];
 
                 for (let item of values){
@@ -99,7 +98,6 @@ function getTokenCompanyMapFromDatabase() {
             }
             else{
                 data.map(o=> {
-                    console.log(o);
                     hashArray[o.token]=o.companyName;
                     tokenArray.push(o.token);
                 });
