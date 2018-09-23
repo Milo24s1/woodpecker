@@ -25,7 +25,7 @@ app.use('/',(req,res,next)=>{
         }).sendStatus(401);
     }
 
-    if (user.pass == config.systemPassword && user.name ==config.systemUserName){
+    if (user.pass !== undefined && user.pass == config.systemPassword && user.name ==config.systemUserName){
         next();
     }
     else{
