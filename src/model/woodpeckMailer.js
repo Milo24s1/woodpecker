@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const Woodpecker = require('woodpecker-api');
 const fs = require('fs');
 const config = require('../../config/credintials');
+const Company = require('../../model/company');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -19,7 +20,7 @@ woodpeckMailer.sendMail = async function(req,res){
 
     const token = req.body.token;
     const receivers = req.body.emailAddressList;
-    let {hashArray, tokenArray}= getTokenCompanyMap();
+    let {hashArray, tokenArray}= await getTokenCompanyMapFromDatabase();
 
     const clientName = hashArray[token];
     const rowData = await searchCompanyCampaigns(token,hashArray[token]);
@@ -57,6 +58,29 @@ function getTokenCompanyMap() {
         tokenArray.push(o.token);
     });
     return {'hashArray':hashArray,'tokenArray':tokenArray};
+}
+function getTokenCompanyMapFromDatabase() {
+    let hashArray = [];
+    let tokenArray = [];
+
+    return new Promise(function (resolve,reject) {
+        Company.getCompanyList(function (err,data) {
+            console.log(data[0]);
+            if(err){
+                console.log(err);
+            }
+            else{
+                data.map(o=> {
+                    hashArray[o.token]=o.companyName;
+                    tokenArray.push(o.token);
+                });
+            }
+            resolve({'hashArray':hashArray,'tokenArray':tokenArray});
+        })
+
+    });
+
+
 }
 
 function searchCompanyCampaigns(companyToken,company) {
