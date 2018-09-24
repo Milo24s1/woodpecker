@@ -21,12 +21,13 @@ woodpeckMailer.sendMail = async function(req,res){
     const token = req.body.token;
     const receivers = req.body.emailAddressList;
     const customSelection = req.body.customSelection;
+    const customMessage = req.body.customMessage;
 
     let {hashArray, tokenArray}= await getTokenCompanyMapFromDatabase();
 
     const clientName = hashArray[token];
     const rowData = await searchCompanyCampaigns(token,hashArray[token]);
-    const html = getEmailBody(rowData,customSelection);
+    const html = getEmailBody(rowData,customSelection,customMessage);
     //fs.writeFileSync('email.html',html,'utf8');
     let mailOptions = {
         from: '"Matt" <matt@getprospectgenai.com>', // sender address
@@ -141,7 +142,7 @@ function searchCompanyCampaigns(companyToken,company) {
 
 }
 
-function getEmailBody(rowData,customSelection) {
+function getEmailBody(rowData,customSelection,customMessage) {
     let header = `<table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" >
 
         <tr>
@@ -162,6 +163,20 @@ function getEmailBody(rowData,customSelection) {
                                         <a href="" style="display: block; border-style: none !important; border: 0 !important;"><img width="100" border="0" style="display: block; width: 100px;" src="http://dash.prospectgenai.com/img/ProspectGen_AI01_white.png" alt="" /></a>
                                     </td>
                                 </tr>
+                                <tr>
+                        <td align="center">
+
+                            <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
+
+                                <tr>
+                                    <td align="left" style='padding-top: 10px;font-family: "Poppins", sans-serif;
+line-height: 1.5;'>
+                                       ${customMessage}
+                                       </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
                             </table>
                         </td>
                     </tr>

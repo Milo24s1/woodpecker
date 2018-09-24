@@ -97,7 +97,9 @@
             </div>
             </form>
             <p class="font-weight-bold" id="addEmail"><i class="fa fa-envelope-o cyan-text" aria-hidden="true"></i>&nbsp;Add Another Email </p>
-
+            <p class="font-weight-bold" id="addEmail"><i class="fa fa-envelope-o purple-text" aria-hidden="true"></i>&nbsp;Add Custom Message </p>
+            <textarea class="form-control" id="customMessage" rows="7"></textarea>
+            <br>
             <div class="row">
                 <div class="col-md-6">
 
@@ -339,7 +341,7 @@
             if(doValidation){
 
                 var emailAddressList = [];
-                var nodes= document.querySelectorAll(".form-control");
+                var nodes= document.querySelectorAll("#emailConfig input[class='form-control']");
                 for(i=0;i<nodes.length;i++){
                     emailAddressList.push(nodes[i].value)
                 }
@@ -355,7 +357,8 @@
                     data: {
                         emailAddressList : emailAddressList,
                         token: currentToken,
-                        customSelection: customSelection
+                        customSelection: customSelection,
+                        customMessage : $("#customMessage").val()
                     },
                     success: function (data) {
                         $("#loader").addClass('invisible');
