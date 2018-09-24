@@ -7,6 +7,10 @@ const CompanySchema = mongoose.Schema({
     token : {
         type: String,
         unique: true
+    },
+    emailColumns : {
+        type: [Number],
+        default: undefined
     }
 });
 
@@ -28,3 +32,6 @@ module.exports.deleteCompany = function (id,callback) {
   Company.findByIdAndRemove(id,callback);
 };
 
+module.exports.updateCompany = function (id,update,callback) {
+    Company.findByIdAndUpdate(id, update, callback)
+};

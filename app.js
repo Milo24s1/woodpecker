@@ -25,7 +25,7 @@ app.use('/',(req,res,next)=>{
         }).sendStatus(401);
     }
 
-    if (user.pass !== undefined && user.pass == config.systemPassword && user.name ==config.systemUserName){
+    else if (user.pass !== undefined && user.pass == config.systemPassword && user.name ==config.systemUserName){
         next();
     }
     else{
@@ -69,6 +69,9 @@ app.post('/search',function (req,res) {
 
 app.post('/sendEmail',function (req,res) {
     woodpeckMailer.sendMail(req,res);
+});
+app.post('/saveReportConfig',function (req,res) {
+    token.saveReportConfig(req,res);
 });
 
 

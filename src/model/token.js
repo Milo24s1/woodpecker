@@ -20,7 +20,7 @@ token.addToken = function (req,res) {
 token.addTokenToDatabase = function(req,res){
     
     try {
-       const newCompany = Company({'companyName':req.body.company,'token':req.body.token});
+       const newCompany = Company({'companyName':req.body.company,'token':req.body.token,'emailColumns':[1,2,3,4]});
        Company.addCompany(newCompany,function (err,company) {
 
            if(err){
@@ -73,6 +73,20 @@ token.deleteTokenFromDatabase = function (req,res) {
       res.redirect('/add');
   });
 };
+
+token.saveReportConfig = function (req,res) {
+
+    Company.updateCompany(req.body.id,{emailColumns:req.body.emailColumns},function (err,data) {
+
+        if(err){
+            res.status(400).send({"message":err});
+        }
+        else {
+            res.status(200).send({"message":'Successfully Saved'})
+        }
+    });
+};
+
 function compareStrings(a, b) {
     // Assuming you want case-insensitive comparison
     a = a.toLowerCase();

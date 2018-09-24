@@ -59,7 +59,7 @@
                 <td class="col-5 text-truncate"><%= itms[i].token %></td>
                 <td class="col-2"><a data-tid="<%= itms[i]._id %>" href="/deleteToken/<%= itms[i]._id %>" class="btn btn-sm btn-danger">Delete</a></td>
                 <td class="col-1"><a title="Send Email" data-toggle="modal" data-target="#emailConfig"><i class="fa fa-bell fa-2x cyan-text pr-3" aria-hidden="true"></i></a></td>
-                <td class="col-1"><a title="Settings" data-toggle="modal" data-target="#reportConfig"><i class="fa fa-cog fa-2x purple-text pr-3" aria-hidden="true"></i></a></td>
+                <td class="col-1"><a data-colid="<%= itms[i].emailColumns %>" title="Settings" data-toggle="modal" data-target="#reportConfig"><i class="fa fa-cog fa-2x purple-text pr-3" aria-hidden="true"></i></a></td>
             </tr>
             <% } %>
             </tbody>
@@ -97,6 +97,45 @@
             </div>
             </form>
             <p class="font-weight-bold" id="addEmail"><i class="fa fa-envelope-o cyan-text" aria-hidden="true"></i>&nbsp;Add Another Email </p>
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="custom-control custom-checkbox  font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked1" checked>
+                        <label class="custom-control-label" for="customChecked1">Company</label>
+                    </div>
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked2" checked>
+                        <label class="custom-control-label" for="customChecked2">Campaign</label>
+                    </div>
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked3" checked>
+                        <label class="custom-control-label" for="customChecked3">Status</label>
+                    </div>
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked4" checked>
+                        <label class="custom-control-label" for="customChecked4">Prospects</label>
+                    </div>
+
+                </div>
+                <div class="col-md-6" >
+
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked5" checked>
+                        <label class="custom-control-label" for="customChecked5">Email Delivered</label>
+                    </div>
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked6" checked>
+                        <label class="custom-control-label" for="customChecked6">Opened</label>
+                    </div>
+                    <div class="custom-control custom-checkbox font-weight-bold">
+                        <input type="checkbox" class="custom-control-input" id="customChecked7" checked>
+                        <label class="custom-control-label" for="customChecked7">Responses</label>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
         <!--Footer-->
@@ -124,24 +163,59 @@
         </div>
 
         <!--Body-->
-        <div class="modal-body">
-            <div class="text-center">
-                <i class="fa fa-check fa-4x mb-3 animated rotateIn"></i>
-            </div>
-
+        <div class="modal-body ">
             <form class="needs-validation" novalidate>
-            <div class="md-form">
-                <i class="fa fa-envelope prefix"></i>
-                <input type="text" id="inputIconEx1" class="form-control" value="matt@prospectgenai.com" required>
-                <label for="inputIconEx1">E-mail address</label>
-            </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+
+                        <div class="custom-control custom-checkbox  font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked1" checked>
+                            <label class="custom-control-label" for="defaultChecked1">Company</label>
+                        </div>
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked2" checked>
+                            <label class="custom-control-label" for="defaultChecked2">Campaign</label>
+                        </div>
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked3" checked>
+                            <label class="custom-control-label" for="defaultChecked3">Status</label>
+                        </div>
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked4" checked>
+                            <label class="custom-control-label" for="defaultChecked4">Prospects</label>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6" >
+
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked5" checked>
+                            <label class="custom-control-label" for="defaultChecked5">Email Delivered</label>
+                        </div>
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked6" checked>
+                            <label class="custom-control-label" for="defaultChecked6">Opened</label>
+                        </div>
+                        <div class="custom-control custom-checkbox font-weight-bold">
+                            <input type="checkbox" class="custom-control-input" id="defaultChecked7" >
+                            <label class="custom-control-label" for="defaultChecked7">Responses</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="md-form">
+                    <textarea></textarea>
+                    </div>
+                </div>
             </form>
-            <p class="font-weight-bold" id="addEmail"><i class="fa fa-envelope-o cyan-text" aria-hidden="true"></i>&nbsp;Add Another Email </p>
         </div>
 
         <!--Footer-->
         <div class="modal-footer">
-            <a type="button" id="sendEmail" class="btn btn-success waves-effect waves-light">Save
+            <a type="button" id="saveReportConfig" class="btn btn-success waves-effect waves-light">Save
             </a>
             <a type="button" class="btn btn-outline-success waves-effect" data-dismiss="modal">Cancel</a>
         </div>
@@ -192,13 +266,15 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.9/js/mdb.min.js"></script>
-
+<script src="/js/bootoast.min.js"></script>
 
 
 <script>
     $(document).ready(function () {
         var inputCount = 1;
         var currentToken = null;
+        var currentItemId = null;
+        var tempCurrentItemId = null;
         $("#addToken").click(function (e) {
 
             $('table > tbody').append('<tr><th scope="row">'+$('#companyName').val()+'</th><td>'+$('#token').val()+'</td></tr>');
@@ -231,6 +307,8 @@
         });
 
         $(".fa-bell").click(function (e) {
+            $(".additionalEmails").remove();
+            $("#emailConfig input[type='checkbox']").prop('checked',true);
             currentToken = $(this).closest('tr').find('td')[0].innerHTML;
             console.log(currentToken);
         });
@@ -249,7 +327,14 @@
         $("#sendEmail").click(function (e) {
 
             var doValidation = true;
+            var customSelection = [];
 
+            $("#emailConfig input[type='checkbox']").each(function (index) {
+                if($(this).prop('checked')){
+                    customSelection.push(index+1);
+                }
+            });
+            console.log(customSelection);
 
             if(doValidation){
 
@@ -269,7 +354,8 @@
                     dataType: 'json',
                     data: {
                         emailAddressList : emailAddressList,
-                        token: currentToken
+                        token: currentToken,
+                        customSelection: customSelection
                     },
                     success: function (data) {
                         $("#loader").addClass('invisible');
@@ -290,6 +376,60 @@
 
             }
 
+        });
+
+
+        $(".fa-cog").click(function (e) {
+
+            currentItemId = $(this).closest('tr').find('td a').first().data('tid');
+            console.log('current item id'+currentItemId);
+            var currentSelection = $(this).closest('a')[0].dataset.colid.split(",").map(o=>Number(o));
+            console.log(currentSelection);
+            //attr('checked', 'checked');
+            $("#reportConfig input[type='checkbox']").each(function (index) {
+
+                if(currentSelection.indexOf(index+1)>-1){
+                    $(this).prop('checked',true);
+                }
+                else {
+                    $(this).prop('checked',false);
+                }
+            });
+        });
+        $("#saveReportConfig").click(function (e) {
+            tempCurrentItemId = currentItemId;
+            var newSelection = [];
+
+            for(i=1;i<=7;i++){
+                if($("#defaultChecked"+i).prop('checked')){
+                    console.log(i);
+                    newSelection.push(i);
+                }
+            }
+
+            console.log(newSelection);
+            $("#reportConfig").modal('hide');
+            $.ajax({
+                'url':'/saveReportConfig',
+                'method': 'post',
+                'dataType': 'json',
+                'data': {
+                    id:currentItemId,
+                    emailColumns: newSelection
+                },
+                'success': function (data) {
+
+
+                    alert(data.message);
+                    $("[data-tid='"+tempCurrentItemId+"']").closest('tr').find("td a")[2].dataset.colid = newSelection.join(",");
+                    //change data-colid
+                },
+                'error': function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.data.message);
+
+                }
+            });
+            currentItemId = null;
         });
     });
 </script>

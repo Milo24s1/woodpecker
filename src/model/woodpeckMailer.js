@@ -20,13 +20,14 @@ woodpeckMailer.sendMail = async function(req,res){
 
     const token = req.body.token;
     const receivers = req.body.emailAddressList;
+    const customSelection = req.body.customSelection;
+
     let {hashArray, tokenArray}= await getTokenCompanyMapFromDatabase();
 
     const clientName = hashArray[token];
     const rowData = await searchCompanyCampaigns(token,hashArray[token]);
-    const html = getEmailBody(rowData);
-
-
+    const html = getEmailBody(rowData,customSelection);
+    //fs.writeFileSync('email.html',html,'utf8');
     let mailOptions = {
         from: '"Matt" <matt@getprospectgenai.com>', // sender address
         to: receivers.join(','), // list of receivers
@@ -65,7 +66,6 @@ function getTokenCompanyMapFromDatabase() {
 
     return new Promise(function (resolve,reject) {
         Company.getCompanyList(function (err,data) {
-            console.log(data[0]);
             if(err){
                 console.log(err);
             }
@@ -75,6 +75,7 @@ function getTokenCompanyMapFromDatabase() {
                     tokenArray.push(o.token);
                 });
             }
+            console.log(hashArray);
             resolve({'hashArray':hashArray,'tokenArray':tokenArray});
         })
 
@@ -140,8 +141,7 @@ function searchCompanyCampaigns(companyToken,company) {
 
 }
 
-function getEmailBody(rowData) {
-
+function getEmailBody(rowData,customSelection) {
     let header = `<table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" >
 
         <tr>
@@ -235,13 +235,14 @@ line-height: 24px;
 text-align: left;
 height: 65px;'>
                         <tr>
-                            <th scope="col">Company</th>
-                            <th scope="col">Campaign</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Prospects</th>
-                            <th scope="col">Email Delivered</th>
-                            <th scope="col">Opened</th>
-                            <th scope="col">Responses</th>
+                            ${customSelection.indexOf('1')>-1?'<th scope="col">Company</th>':''}
+                            ${customSelection.indexOf('2')>-1?'<th scope="col">Campaign</th>':''}
+                            ${customSelection.indexOf('3')>-1?'<th scope="col">Status</th>':''}
+                            ${customSelection.indexOf('4')>-1?'<th scope="col">Prospects</th>':''}
+                            ${customSelection.indexOf('5')>-1?'<th scope="col">Email Delivered</th>':''}
+                            ${customSelection.indexOf('6')>-1?'<th scope="col">Opened</th>':''}
+                            ${customSelection.indexOf('7')>-1?'<th scope="col">Responses</th>':''}
+                            
                         </tr>
                     </thead>
                     <tbody style='border-collapse: collapse;
@@ -257,7 +258,7 @@ text-align: left;
     for(i=0;i<rowData.length;i++){
         console.log(rowData[i].company);
         html += `<tr>
-                                        <th style='border-bottom-color: rgb(222, 226, 230);
+                            ${customSelection.indexOf('1')>-1?`<th style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -272,8 +273,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'scope="row">${rowData[i].company}</th>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'scope="row">${rowData[i].company}</th>`:''}
+                            ${customSelection.indexOf('2')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -288,8 +289,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].campaign}</td>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'>${rowData[i].campaign}</td>`:''}
+                            ${customSelection.indexOf('3')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -304,8 +305,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].status}</td>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'>${rowData[i].status}</td>`:''}
+                            ${customSelection.indexOf('4')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -320,8 +321,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].prospects}</td>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'>${rowData[i].prospects}</td>`:''}
+                            ${customSelection.indexOf('5')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -336,8 +337,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].delivered} (${rowData[i].deliveredPrecentage}%)</td>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'>${rowData[i].delivered} (${rowData[i].deliveredPrecentage}%)</td>`:''}
+                            ${customSelection.indexOf('6')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -352,8 +353,8 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].opened} (${rowData[i].openedPrecentage}%)</td>
-                                        <td style='border-bottom-color: rgb(222, 226, 230);
+        vertical-align: bottom;'>${rowData[i].opened} (${rowData[i].openedPrecentage}%)</td>`:''}
+                            ${customSelection.indexOf('7')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
         border-bottom-style: solid;
         border-bottom-width: 1px;
         border-collapse: collapse;
@@ -368,7 +369,14 @@ text-align: left;
         padding-bottom: 16px;
         padding-top: 17.6px;
         text-align: left;
-        vertical-align: bottom;'>${rowData[i].responses} (${rowData[i].responsesPrecentage}%)</td>
+        vertical-align: bottom;'>${rowData[i].responses} (${rowData[i].responsesPrecentage}%)</td>`:''}
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
                                         </tr>`;
     }
 
