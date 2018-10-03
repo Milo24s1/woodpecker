@@ -74,6 +74,10 @@ app.post('/saveReportConfig',function (req,res) {
     token.saveReportConfig(req,res);
 });
 
+app.post('/saveCampaignRecord',function (req,res) {
+    woodpeker.saveCampaignRecord(req,res);
+});
+
 
 app.listen(port, function(){
     console.log('Server is running on port:', port);

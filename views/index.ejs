@@ -28,8 +28,8 @@
 <div style="height: 10vh">
 </div>
 <div id="tableDiv" class="row">
-    <div class="col-2"></div>
-    <div class="col-8">
+    <div class="col-1"></div>
+    <div class="col-10">
         <table class="table">
             <thead class="white-text">
             <tr>
@@ -40,18 +40,70 @@
                 <th scope="col">Email Delivered</th>
                 <th scope="col">Opened</th>
                 <th scope="col">Responses</th>
+                <th scope="col">Email Blast Responses</th>
+                <th scope="col">LinkedIn Responses</th>
+                <th scope="col">New LinkedIn Connections</th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
     </div>
-    <div class="col-2"></div>
+    <div class="col-1"></div>
 </div>
 <div class="flex-center flex-column">
     <div id="loader" class="loader invisible center-block"></div>
 </div>
 
+<div class="modal fade" id="editor" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog  modal-notify modal-success "  role="document" >
+        <!--Content-->
+        <div class="modal-content">
+            <!--Header-->
+            <div class="modal-header">
+                <p class="heading lead font-weight-bold">Edit Response</p>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="white-text">×</span>
+                </button>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                <div class="text-center">
+
+                </div>
+
+                <form class="needs-validation" novalidate>
+                    <div class="md-form">
+                        <i class="fa fa-group prefix"></i>
+                        <input type="text" id="inputIconEx1" class="form-control" value="" required>
+                        <label for="inputIconEx1">Response1</label>
+                    </div>
+                    <div class="md-form">
+                        <i class="fa fa-group prefix"></i>
+                        <input type="text" id="inputIconEx2" class="form-control" value="" required>
+                        <label for="inputIconEx1">Response2</label>
+                    </div>
+                    <div class="md-form">
+                        <i class="fa fa-group prefix"></i>
+                        <input type="text" id="inputIconEx3" class="form-control" value="" required>
+                        <label for="inputIconEx1">Response3</label>
+                    </div>
+                </form>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer">
+                <a type="button" id="saveResponse" class="btn btn-success waves-effect waves-light">Save
+                </a>
+                <a type="button" class="btn btn-outline-success waves-effect" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
 <div style="height: 50vh">
 </div>
 
@@ -80,7 +132,10 @@
 
 <script>
     $(document).ready(function () {
-
+    var defaultRes1,defaultRes2,defaultRes3;
+    var res1Col,res2Col,res3Col;
+    var currentToken = null;
+    var currentCampId = null;
 
         lazyLoad();
         function lazyLoad(next) {
@@ -95,15 +150,33 @@
                 success: function (data) {
                     let tableDom = '';
                     if(data.rowData.length > 0){
+                        let campRecords = data.campRecord;
                         for(i=0;i<data.rowData.length;i++){
+
+                            const tempCampRecord = {
+                                'cus1':'',
+                                'cus2':'',
+                                'cus3':'',
+                            };
+                            if(campRecords.hasOwnProperty(data.rowData[i].campaignId)){
+                                const campReocrd = campRecords[data.rowData[i].campaignId];
+                                tempCampRecord.cus1 = campReocrd.customCol1 ;
+                                tempCampRecord.cus2 = campReocrd.customCol2 ;
+                                tempCampRecord.cus3 = campReocrd.customCol3 ;
+                            }
+
                             tableDom += `<tr>
-                                        <th scope="row">${data.rowData[i].company}</th>
-                                        <td>${data.rowData[i].campaign}</td>
-                                        <td>${data.rowData[i].status}</td>
-                                        <td>${data.rowData[i].prospects}</td>
-                                        <td>${data.rowData[i].delivered} (${data.rowData[i].deliveredPrecentage}%)</td>
-                                        <td>${data.rowData[i].opened} (${data.rowData[i].openedPrecentage}%)</td>
-                                        <td>${data.rowData[i].responses} (${data.rowData[i].responsesPrecentage}%)</td>
+                                        <th class="col-1" data-token=${data.rowData[i].token} scope="row">${data.rowData[i].company}</th>
+                                        <td class="col-2" data-campid=${data.rowData[i].campaignId}>${data.rowData[i].campaign}</td>
+                                        <td class="col-1">${data.rowData[i].status}</td>
+                                        <td class="col-1">${data.rowData[i].prospects}</td>
+                                        <td class="col-1">${data.rowData[i].delivered} (${data.rowData[i].deliveredPrecentage}%)</td>
+                                        <td class="col-1">${data.rowData[i].opened} (${data.rowData[i].openedPrecentage}%)</td>
+                                        <td class="col-1">${data.rowData[i].responses} (${data.rowData[i].responsesPrecentage}%)</td>
+                                        <td class="col-1 cus1">${tempCampRecord.cus1}</td>
+                                        <td class="col-1 cus2">${tempCampRecord.cus2}</td>
+                                        <td class="col-1 cus3">${tempCampRecord.cus3}</td>
+                                        <td class="col-1"><a data-toggle="modal" data-target="#editor"><i class="fa fa-pencil fa-2x purple-text pr-3" aria-hidden="true"></i></a></td>
                                         </tr>`
                         }
                         $("table").append(tableDom)
@@ -125,6 +198,60 @@
         }
     });
 
+    $('body').on('click', '.fa-pencil', function(){
+        $('label').addClass('active');
+        res1Col = $(this).closest('tr').find('.cus1');
+        defaultRes1= res1Col.text();
+        res2Col = $(this).closest('tr').find('.cus2');
+        defaultRes2= res2Col.text();
+        res3Col = $(this).closest('tr').find('.cus3');
+        defaultRes3= res3Col.text();
+
+        $('#inputIconEx1').val(defaultRes1);
+        $('#inputIconEx2').val(defaultRes2);
+        $('#inputIconEx3').val(defaultRes3);
+
+        currentToken = $(this).closest('tr').find('th').data('token');
+        currentCampId = $(this).closest("tr").find("td").first().data('campid');
+    });
+    $('#saveResponse').click(function () {
+        $("#editor").modal('hide');
+
+        var tempVal1 = $('#inputIconEx1').val();
+        var tempVal2 = $('#inputIconEx2').val();
+        var tempVal3 = $('#inputIconEx3').val();
+
+        $.ajax({
+            'url':'/saveCampaignRecord',
+            'method': 'post',
+            'dataType': 'json',
+            'data': {
+                campId:currentCampId,
+                token: currentToken,
+                customCol1: tempVal1,
+                customCol2: tempVal2,
+                customCol3: tempVal3,
+            },
+            'success': function (data) {
+
+
+                alert(data.message);
+                res1Col.text(tempVal1);
+                res2Col.text(tempVal2);
+                res3Col.text(tempVal3);
+                // $("[data-tid='"+tempCurrentItemId+"']").closest('tr').find("td a")[2].dataset.colid = newSelection.join(",");
+                //change data-colid
+            },
+            'error': function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.data.message);
+
+            }
+        });
+
+        currentToken = null;
+        currentCampId = null;
+
+    });
 
 </script>
 <style>
