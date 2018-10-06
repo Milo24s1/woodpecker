@@ -4,6 +4,7 @@ const Woodpecker = require('woodpecker-api');
 const fs = require('fs');
 const config = require('../../config/credintials');
 const Company = require('../../model/company');
+const CampaignRecord = require('../../model/campaignRecord');
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -26,8 +27,8 @@ woodpeckMailer.sendMail = async function(req,res){
     let {hashArray, tokenArray}= await getTokenCompanyMapFromDatabase();
 
     const clientName = hashArray[token];
-    const rowData = await searchCompanyCampaigns(token,hashArray[token]);
-    const html = getEmailBody(rowData,customSelection,customMessage);
+    const {rowData,campRecord} = await searchCompanyCampaigns(token,hashArray[token]);
+    const html = getEmailBody(rowData,customSelection,customMessage,campRecord);
     //fs.writeFileSync('email.html',html,'utf8');
     let mailOptions = {
         from: '"Matt" <matt@getprospectgenai.com>', // sender address
@@ -99,25 +100,28 @@ function searchCompanyCampaigns(companyToken,company) {
             Promise.all(companyPromiseArray)
                 .then(values=>{
 
-                    console.log('data recieved');
                     const rowData = [];
 
                     for (let item of values){
                         item =item[0];
-
-                        if(item.status != 'DELETED' ){
+                        if(item.status != 'DELETED'){
                             const row = {
                                 'company':company,
-                                'date': item.created,
+                                'token':companyToken,
                                 'campaign':item.name,
+                                'campaignId':item.id,
                                 'delivered': item.stats.delivery,
                                 'status': item.status,
-                                'deliveredPrecentage': isNaN(Math.floor(100*item.stats.delivery/item.stats.prospects)) ? 0:Math.floor(100*item.stats.delivery/item.stats.prospects),
+                                'deliveredPrecentage': Math.floor(100*item.stats.delivery/item.stats.prospects),
                                 'opened':item.stats.opened,
-                                'openedPrecentage': isNaN(Math.floor(100*item.stats.opened/item.stats.delivery))? 0 :Math.floor(100*item.stats.opened/item.stats.delivery),
+                                'openedPrecentage':Math.floor(100*item.stats.opened/item.stats.delivery),
                                 'responses':item.stats.replied,
-                                'responsesPrecentage': isNaN(Math.floor(100*item.stats.replied/item.stats.delivery))? 0 :Math.floor(100*item.stats.replied/item.stats.delivery),
-                                'prospects':item.stats.prospects
+                                'responsesPrecentage':Math.floor(100*item.stats.replied/item.stats.delivery),
+                                'prospects':item.stats.prospects,
+                                'cus1':'',
+                                'cus2':'',
+                                'cus3':'',
+
 
                             };
                             rowData.push(row);
@@ -125,16 +129,32 @@ function searchCompanyCampaigns(companyToken,company) {
 
                     }
 
-                    resolve(rowData) ;
+                    CampaignRecord.getCampaignRecordsByToken(companyToken,function (err,data) {
+                        const campRecord = {};
+                        if(err){
+                            console.log(err);
+                        }
+                        else {
+                            data.map(o=>{
+                                campRecord[o.campId]= o;
+                            });
+
+                            resolve({'rowData':rowData,'campRecord':campRecord}) ;
+                        }
+                    });
+
 
                 })
                 .catch(e=>{
                     console.log(e);
+                    resolve({'rowData':[],'campRecord':[]});
                 });
 
 
-        }).catch(e=>{
-
+        }).
+        catch(e=>{
+            console.log(e);
+            resolve({'rowData':[],'campRecord':[]});
         });
     });
 
@@ -142,7 +162,7 @@ function searchCompanyCampaigns(companyToken,company) {
 
 }
 
-function getEmailBody(rowData,customSelection,customMessage) {
+function getEmailBody(rowData,customSelection,customMessage,campRecords) {
     let header = `<table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" >
 
         <tr>
@@ -257,6 +277,9 @@ height: 65px;'>
                             ${customSelection.indexOf('5')>-1?'<th scope="col">Email Delivered</th>':''}
                             ${customSelection.indexOf('6')>-1?'<th scope="col">Opened</th>':''}
                             ${customSelection.indexOf('7')>-1?'<th scope="col">Responses</th>':''}
+                            ${customSelection.indexOf('8')>-1?'<th scope="col">Email Blast Responses</th>':''}
+                            ${customSelection.indexOf('9')>-1?'<th scope="col">LinkedIn Responses</th>':''}
+                            ${customSelection.indexOf('10')>-1?'<th scope="col">New LinkedIn Connections</th>':''}
                             
                         </tr>
                     </thead>
@@ -271,6 +294,19 @@ text-align: left;
 '>`;
 
     for(i=0;i<rowData.length;i++){
+
+        const tempCampRecord = {
+            'cus1':'',
+            'cus2':'',
+            'cus3':'',
+        };
+        if(campRecords.hasOwnProperty(rowData[i].campaignId)){
+            const campReocrd = campRecords[rowData[i].campaignId];
+            tempCampRecord.cus1 = campReocrd.customCol1 ;
+            tempCampRecord.cus2 = campReocrd.customCol2 ;
+            tempCampRecord.cus3 = campReocrd.customCol3 ;
+        }
+
         console.log(rowData[i].company);
         html += `<tr>
                             ${customSelection.indexOf('1')>-1?`<th style='border-bottom-color: rgb(222, 226, 230);
@@ -385,6 +421,54 @@ text-align: left;
         padding-top: 17.6px;
         text-align: left;
         vertical-align: bottom;'>${rowData[i].responses} (${rowData[i].responsesPrecentage}%)</td>`:''}
+                            ${customSelection.indexOf('8')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-collapse: collapse;
+        border-top-color: rgb(255, 255, 255);
+        border-top-style: none;
+        border-top-width: 0px;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        font-size: 14.4px;
+        font-weight: 400;
+        line-height: 21.6px;
+        padding-bottom: 16px;
+        padding-top: 17.6px;
+        text-align: left;
+        vertical-align: bottom;'>${tempCampRecord.cus1}</td>`:''}
+                            ${customSelection.indexOf('9')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-collapse: collapse;
+        border-top-color: rgb(255, 255, 255);
+        border-top-style: none;
+        border-top-width: 0px;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        font-size: 14.4px;
+        font-weight: 400;
+        line-height: 21.6px;
+        padding-bottom: 16px;
+        padding-top: 17.6px;
+        text-align: left;
+        vertical-align: bottom;'>${tempCampRecord.cus2} </td>`:''}
+                            ${customSelection.indexOf('10')>-1?`<td style='border-bottom-color: rgb(222, 226, 230);
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-collapse: collapse;
+        border-top-color: rgb(255, 255, 255);
+        border-top-style: none;
+        border-top-width: 0px;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        font-size: 14.4px;
+        font-weight: 400;
+        line-height: 21.6px;
+        padding-bottom: 16px;
+        padding-top: 17.6px;
+        text-align: left;
+        vertical-align: bottom;'>${tempCampRecord.cus3} </td>`:''}
                                         
                                         
                                         
